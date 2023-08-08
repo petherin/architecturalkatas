@@ -49,12 +49,12 @@ For SEO analysis can use the Google Search Console API client library for Go (al
 
 User forums - can be a section under the main trends website, maybe a separate service. React front-end, Go backend? If we use Go for rest of site then just go with that again.
 
-Users
+Users from most to fewest permissions
 
 * Superadmin - can create new websites, administer users, look at trends and SEO analysis, and perform all actions
-* Poster - someone who can post on previously-created websites. Someone who is a poster can also post in user forums
-* Moderator - user forum moderator is a user forum user with some extra permissions to delete inappropriate posts and contact forum users
-* Reader - someone who can read posts on websites
+* Moderator - moderator is a website/forum poster with some extra permissions to delete inappropriate forum and website posts and contact users
+* Poster - someone who can create and edit their own posts on previously-created websites. Can also post in user forums
+* Reader - someone who can only read posts on websites
 
 ### Useful Resources
 **How to get high SEO**
