@@ -31,7 +31,41 @@ A superadmin logs into an admin page that lets them see trends. They can create 
 
 It will create the website as a new domain name, buying it for you if available. Can use https://dnsimple.com/api to buy domain names. Or AWS SDK to get domain names with Route 53.
 
-Create website under the new domain name using a template, host in an S3 bucket or AWS Amplify Hosting.
+AWS website hosting options: https://beabetterdev.com/2021/01/24/website-hosting-options-on-aws-picking-the-right-option-for-you/
+
+Create website under the new domain name using a template
+
+AWS Hosting options:
+
+* static website in an S3 bucket
+  * from AWS website hosting options link above:
+    > In summary, Static Hosting with S3 is Great For:
+    > 
+    > Websites that won’t change very often, such as a business website.
+  * we want to keep adding posts to our websites so the above point makes S3 seem unsuitable for our case
+* WordPress Hosting with Amazon Lightsail
+  * do we want to integrate with WordPress or have our own website posting service? Probably the latter
+* Single Page Apps with AWS Amplify
+  * can be expensive if don't know what you're doing
+* Elastic Beanstalk
+  * same here, and feels like Amplify supersedes it
+* a Fargate container
+  * from options link above:
+  > In summary, EC2 or ECS are Great For:
+  > 
+  >Folks looking for enterprise level scale-abiltiy (millions of users)
+  * This feels like what we need, satisfying the millions of users requirement
+  * But what web server tech do we use? https://www.elegantthemes.com/blog/wordpress/best-web-servers-for-windows-and-linux
+  * Apache - no - Apache can struggle with extremely high-traffic sites.
+  * Tomcat - no - best for Java apps
+  * **NGINX - probably - good for high traffic**
+  * LiteSpeed - maybe - good for high traffic, optimised for PHP
+  * CentOS Stream - good for devving apps so prob no good for prod
+  * Caddy - maybe - focus on security
+  * Lighttpd - no - doesn't seem especially great
+  * Microsoft IIS - no - not available for Linux, Windows only
+  
+Can we programatically send a new container to Fargate? Not sure how practical or possible this is.
 
 User admin - superadmins can maintain post-admins 
 
