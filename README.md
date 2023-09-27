@@ -116,3 +116,6 @@ https://www.techtarget.com/whatis/feature/Content-moderation-guidelines-to-consi
 https://excalidraw.com/#json=evjVwYjpm3y0MHT9tahwI,UQsXKlrncX9hukzlTd-UZA
 
 ![container_diagram01.png](assets%2Fcontainer_diagram01.png)
+
+Source for above diagram saved in `assets/canhascheezborger-kata.excalidraw`.
+
