@@ -1,6 +1,3 @@
-# Architectural Katas
-A place to practice software architecture.
-
 ## I Can Haz Cheezborger?
 https://www.architecturalkatas.com/kata.html?kata=Cheezborger.json
 
@@ -11,6 +8,8 @@ Users: millions+ readers, thousands+ posters, dozens admins
 Requirements: high SEO; easy for users to add content; easily mashable/clickable; reject inappropriate content; easy trend analysis; user forums; user moderators; ubiquitous accessibility; easy admin "reach"/accessibility
 
 ### Analysis
+
+> Whoa. This is a biggie to do as the first one. Postponing to work on something else.
 
 * as a new trend is identified, create a website following it and highlighting it and allowing users to interact with it x
 * thousands+ posters
@@ -88,7 +87,6 @@ Users from most to fewest permissions
 * Superadmin - can create new websites, administer users, look at trends and SEO analysis, and perform all actions
 * Moderator - moderator is a website/forum poster with some extra permissions to delete inappropriate forum and website posts and contact users
 * Poster - someone who can create and edit their own posts on previously-created websites. Can also post in user forums
-* Reader - someone who can only read posts on websites
 
 ### Useful Resources
 **How to get high SEO**
@@ -101,7 +99,7 @@ Google search console https://developers.google.com/search/docs/fundamentals/seo
 
 https://trends.google.com/trends - do we want global or country-specific trends?
 
-Automatically create web site
+Automatically create website
 
 Automatically buy domain name
 
@@ -113,9 +111,8 @@ https://www.techtarget.com/whatis/feature/Content-moderation-guidelines-to-consi
 
 ### Diagram (WIP)
 
-https://excalidraw.com/#json=evjVwYjpm3y0MHT9tahwI,UQsXKlrncX9hukzlTd-UZA
+https://excalidraw.com/#json=AZwYQ6Fh8Sf4fyEGLGVQn,vRUKdtT7458vsmquVCK9ew
 
-![container_diagram01.png](assets%2Fcontainer_diagram01.png)
+![container_diagram01.png](container_diagram01.png)
 
-Source for above diagram saved in `assets/canhascheezborger-kata.excalidraw`.
 
