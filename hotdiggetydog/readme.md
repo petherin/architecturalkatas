@@ -59,6 +59,14 @@ SQL database to hold inventory, a service to update it whenever a transaction oc
 
 Notify suppliers when a certain threshold is hit for stock at any hot dog stand.
 
+But how do we track how much inventory we have? Does SumUp allow us to track inventory? Does it let you say what is being sold as well as how much the sale is? If so, we can use this to feed in to an inventory service, e.g.:
+
+1 x hot dog = 1 hot dog bun, 1 hot dog, onions, mustard.
+
+We don't want to make the seller put all this in each time. Hot dogs and hot dog buns are known quantities, so we can subtract each of those when a hot dog is sold.
+
+We will assume for a day's business, a seller will always have enough onions, ketchup and mustard. It's hot dogs and hot dog buns that matter, and that's covered by either SumUp or our own inventory service.
+
 #### Track Sales by Time and Location
 
 Need geolocation service (get from phone) to include time and location when transaction occurs. 
