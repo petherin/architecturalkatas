@@ -161,13 +161,69 @@ Roles
 * **supplier** - receive notifications of low supplies at a given hot dog stand so they can go and resupply
 * **admin** - can do all of the above and see all sales information, and manage users and change their roles
 
+##### Authentication Options
+###### Auth0
 [00-login-hooks](00-login-hooks) - a React Native OAuth solution created by Auth0, that uses Google, Twitter, Facebook etc for logging in users.
 
-Auth0 lets us create users, and roles with permissions. Not free, if we have 50 users per day that's 50x30=1,500 Monthly Active Users which is $23 per month.
+Auth0 lets us create users, and roles with permissions.
 
-Look at basic OAuth without getting Auth0 involved?
+Not free, if we have 50 users per day that's 50x30=1,500 Monthly Active Users.
 
-Or use AWS Cognito? Paid solutions might be overkill for 50 users.
+Users may log in multiple times a day if their sessions expires, so could be up to 5 logins per user per day?
+
+5x50x30=7,500 Monthly Active Users
+
+This is really close to the 7,000 free users you get in the free tier.
+
+**Price: The Essentials tier with 7,000 MAU is $160 per month. Max users is 10,000.**
+
+###### Frontegg
+
+[app-with-frontegg](app-with-frontegg) - a React app integrating with a Frontegg solution.
+
+The app was created by following this https://portal.frontegg.com/development/settings/integration
+
+Selected React followed by TypeScript + SWC.
+
+Then followed instructions in the link above.
+
+The Frontegg solution in the Builder page is:
+
+![Screenshot 2023-10-24 at 12.35.46.png](Screenshot%202023-10-24%20at%2012.35.46.png)
+
+![Screenshot 2023-10-24 at 12.38.09.png](Screenshot%202023-10-24%20at%2012.38.09.png)
+
+i.e. Google login with `Allow signup` enabled.
+
+Had to set up the Google side following https://docs.frontegg.com/docs/google-login.
+
+When setting the OAuth 2.0 Client ID in Google, the `Authorized redirect URIs` didn't work with http://localhost:5173/account/social/success.
+
+Had to use the Frontegg endpoint instead https://app-al0s8azy1prn.frontegg.com/oauth/account/social/success.
+
+The base URL could be seen in Frontegg - Development - Env settings - General tab.
+
+Then got the client id and secret from Google.
+
+Went to Frontegg - under the Development env's Social Logins page clicked Manage for Google.
+
+![Screenshot 2023-10-24 at 12.49.54.png](Screenshot%202023-10-24%20at%2012.49.54.png)
+
+Added the client id and secret here and the callback as well.
+
+The callback URI was my app's endpoint running locally i.e. http://localhost:5173/account/social/success
+
+**Price: Starter $99 per month, Professional $799 per month.**
+
+###### AWS Cogito
+https://aws.amazon.com/pm/cognito/
+
+**Price: https://calculator.aws/#/addService/Cognito says 7,500 MAU is free. Max is 50,000 MAU.**
+
+###### Custom Built OAuth
+There are examples of implementing OAuth all over the internet.
+
+**Price: Free**
 
 #### Non-Functionals
 
