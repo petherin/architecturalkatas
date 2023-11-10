@@ -12,25 +12,38 @@ Users: fifty or so hot dog stand operators, thousands of customers in the local 
 
 <!-- toc -->
 
-- [Handy Links](#handy-links)
-- [Analysis](#analysis)
-  * [Mobile App](#mobile-app)
-  * [Card Reader and SDK](#card-reader-and-sdk)
-  * [Payment Processing](#payment-processing)
-  * [Inventory Management](#inventory-management)
-  * [Track Sales by Time and Location](#track-sales-by-time-and-location)
-  * [Provide Social Media Updates](#provide-social-media-updates)
-  * [User Management and Authentication](#user-management-and-authentication)
-    + [Authentication Options](#authentication-options)
-      - [Auth0](#auth0)
-      - [Frontegg](#frontegg)
-      - [AWS Cognito](#aws-cognito)
-      - [Custom Built OAuth](#custom-built-oauth)
-      - [Custom Authentication and Authorisation](#custom-authentication-and-authorisation)
-  * [Risks](#risks)
-  * [Non-Functionals](#non-functionals)
-  * [Constraints](#constraints)
-  * [Principles](#principles)
+  * [Handy Links](#handy-links)
+  * [Analysis](#analysis)
+  * [Components (so far)](#components-so-far)
+    + [Mobile App](#mobile-app)
+    + [Card Reader and SDK](#card-reader-and-sdk)
+    + [Payment Processing](#payment-processing)
+    + [Inventory Management](#inventory-management)
+    + [Track Sales by Time and Location](#track-sales-by-time-and-location)
+    + [Provide Social Media Updates](#provide-social-media-updates)
+    + [User Management and Authentication](#user-management-and-authentication)
+      - [Authentication Options](#authentication-options)
+        * [Auth0](#auth0)
+        * [Frontegg](#frontegg)
+        * [AWS Cognito](#aws-cognito)
+        * [Custom Built OAuth](#custom-built-oauth)
+        * [Custom Authentication and Authorisation](#custom-authentication-and-authorisation)
+    + [Risks](#risks)
+    + [Non-Functionals](#non-functionals)
+    + [Constraints](#constraints)
+    + [Principles](#principles)
+- [Notes](#notes)
+- [User Authentication Versus App Authentication](#user-authentication-versus-app-authentication)
+  * [User Authentication:](#user-authentication)
+  * [App Authentication:](#app-authentication)
+- [Typical Mobile App Flow for User Authentication and Authorisation](#typical-mobile-app-flow-for-user-authentication-and-authorisation)
+  * [1. User Authentication:](#1-user-authentication)
+  * [2. Performing an Action:](#2-performing-an-action)
+  * [3. Authorization on the Server Side:](#3-authorization-on-the-server-side)
+  * [4. UI Considerations:](#4-ui-considerations)
+  * [5. Handling Token Expiry:](#5-handling-token-expiry)
+  * [Security Considerations:](#security-considerations)
+  * [Sequence Diagram](#sequence-diagram)
 
 <!-- tocstop -->
 
@@ -39,6 +52,14 @@ Users: fifty or so hot dog stand operators, thousands of customers in the local 
 https://frontegg.com/ Ui for setting up things like OAuth or passwordless authentication.
 
 ### Analysis
+
+### Components (so far)
+* Mobile app (possibly React Native) - user authorisation
+* Authorisation service - for user authentication and token generation
+* Inventory service - tracking inventory
+* Database - for inventory (and users with their roles?)
+* Transaction service - to talk to SumUp
+* SumUp (third party payment service)
 
 #### Mobile App
 This amounts to: design the Square, PayPal Here, Shopify POS apps.
@@ -83,8 +104,6 @@ Choose a third party payment processor like:
 * Worldpay (FIS)
 * **SumUp - as we're using their card reader and SDK we might as well use them for the actual payment processing**
 * Shopify Payments
-
-> Flesh out all the stuff below.
 
 #### Inventory Management
 
@@ -188,6 +207,10 @@ Roles
 * **supplier** - receive notifications of low supplies at a given hot dog stand so they can go and resupply
 * **admin** - can do all of the above and see all sales information, and manage users and change their roles
 
+It's typical for multiple individuals in a small business to use the same SumUp account.
+
+So when a user is logged in, they can use the one SumUp account. The app would contact a separate transaction service and it would talk to the SumUp API and return the results back to the app.
+
 ##### Authentication Options
 ###### Auth0
 [00-login-hooks](00-login-hooks) - a React Native OAuth solution created by Auth0, that uses Google, Twitter, Facebook etc for logging in users.
@@ -263,6 +286,10 @@ Come up with own approach like username and password, user gets a token signed b
 
 Use RBAC for the user authorisation?
 
+Refer to https://mobile-security.gitbook.io/mobile-security-testing-guide/general-mobile-app-testing-guide/0x04e-testing-authentication-and-session-management
+
+**Price: Free**
+
 #### Risks
 * AWS Cognito 
   * If we use AWS Cognito for authentication, authorisation and permissions and roles for users using OAuth2.0 and Google/Facebook, etc logins, it will be a risk if the dev team aren't familiar with Cognito or OAuth 2.0.
@@ -272,3 +299,114 @@ Use RBAC for the user authorisation?
 #### Constraints
 
 #### Principles
+
+## Notes
+## User Authentication Versus App Authentication
+User authentication and app authentication are two distinct processes within a mobile app, each serving a different purpose.
+
+### User Authentication:
+
+**Definition:**
+User authentication is the process of verifying the identity of an individual user, ensuring that the person trying to access the app or certain features within it is indeed who they claim to be.
+
+**Purpose:**
+1. **Access Control:** User authentication is primarily used for controlling access to the app and its features. It ensures that only authorized users can log in and interact with the app's functionalities.
+
+2. **Data Security:** By authenticating users, the app can associate actions and data with specific individuals, helping to secure sensitive information and prevent unauthorized access.
+
+3. **Personalization:** User authentication enables personalization features, allowing the app to customize the user experience based on individual preferences and settings.
+
+**Methods:**
+- **Password-based:** Traditional username and password authentication.
+- **Biometric:** Utilizing fingerprints, facial recognition, or other biometric data.
+- **Multi-Factor Authentication (MFA):** Combining multiple authentication factors for enhanced security.
+
+### App Authentication:
+
+**Definition:**
+App authentication, on the other hand, refers to the process by which a mobile app itself is authenticated with backend servers, APIs, or other services it interacts with. It ensures that the app can securely communicate with external resources.
+
+**Purpose:**
+1. **API Access:** App authentication is crucial when the mobile app needs to interact with external services or APIs. It allows the app to prove its identity to these services to gain access.
+
+2. **Data Exchange:** Securely exchanging data between the app and server, ensuring that the information sent and received is protected from unauthorized access.
+
+3. **Authorization:** App authentication is often tied to authorization mechanisms, ensuring that the app has the necessary permissions to perform certain actions or access specific resources.
+
+**Methods:**
+- **API Keys:** Using a unique key associated with the app to authenticate requests made to the server or API.
+- **OAuth (Client Credentials Grant):** Authenticating the app itself (as opposed to a user) to obtain an access token for accessing protected resources.
+- **Certificates:** Employing digital certificates to establish a secure connection between the app and server.
+
+**Key Differences:**
+
+1. **Scope:**
+  - **User Authentication:** Verifies the identity of individual users.
+  - **App Authentication:** Verifies the identity of the app or service.
+
+2. **Access Control:**
+  - **User Authentication:** Controls access to app features based on individual user identity.
+  - **App Authentication:** Controls access to external services or resources that the app interacts with.
+
+3. **Credentials:**
+  - **User Authentication:** Involves user-specific credentials (e.g., username, password).
+  - **App Authentication:** Involves app-specific credentials (e.g., API keys, client credentials).
+
+In summary, user authentication is focused on verifying the identity of individual users to control access to app features, while app authentication is about ensuring that the app itself is securely authenticated when interacting with external services or APIs. Both processes are essential components of a comprehensive mobile app security strategy.
+
+## Typical Mobile App Flow for User Authentication and Authorisation
+Here's how you would ensure a user can perform an action in a React Native mobile app:
+
+### 1. User Authentication:
+
+- **Login Screen:**
+  - Build a login screen where users can enter their username and password.
+
+- **Authentication Request:**
+  - When the user submits the login form, send an authentication request to the backend server with the entered credentials.
+
+- **JWT Handling:**
+  - If authentication is successful, store the JWT securely on the mobile device. React Native provides options like AsyncStorage or secure storage for this purpose.
+
+### 2. Performing an Action:
+
+- **Action Trigger:**
+  - When a user tries to perform an action that requires authorization, such as accessing a particular screen or making a specific request, trigger the action within the React Native mobile app.
+
+- **Include JWT in Requests:**
+  - Include the JWT in the Authorization header of the HTTP request when making requests to the backend server. This allows the server to identify and authenticate the user.
+
+### 3. Authorization on the Server Side:
+
+- **Token Verification:**
+  - On the server side, verify the JWT for each incoming request to ensure it's valid, not expired, and hasn't been tampered with. Extract the user information and roles from the token.
+
+- **RBAC Checks:**
+  - Perform RBAC checks based on the user's roles to determine whether the user has the necessary permissions to perform the requested action.
+
+- **Response Handling:**
+  - If the user has the required permissions, proceed with the action. If not, return an appropriate error response (e.g., HTTP 403 Forbidden).
+
+### 4. UI Considerations:
+
+- **Conditional Rendering:**
+  - In the React Native mobile app, use conditional rendering to display or hide UI components based on the user's roles and permissions. For example, you might conditionally render buttons or screens based on the user's authorization level.
+
+### 5. Handling Token Expiry:
+
+- **Token Expiry Checks:**
+  - Implement logic on the mobile app to check the expiration of the JWT. If the token is expired, prompt the user to re-authenticate or refresh the token if a refresh token mechanism is in place.
+
+### Security Considerations:
+
+- **HTTPS:**
+  - Ensure that the mobile app communicates with the server over HTTPS to secure data transmission.
+
+- **Token Storage:**
+  - Store tokens securely on the mobile device and follow best practices for securing sensitive information.
+
+- **Secure Data Transmission:**
+  - Implement secure data transmission practices, especially when dealing with sensitive user information or actions.
+
+### Sequence Diagram
+![authflow.png](authflow.png)
