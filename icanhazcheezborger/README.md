@@ -7,6 +7,17 @@ Users: millions+ readers, thousands+ posters, dozens admins
 
 Requirements: high SEO; easy for users to add content; easily mashable/clickable; reject inappropriate content; easy trend analysis; user forums; user moderators; ubiquitous accessibility; easy admin "reach"/accessibility
 
+### Contents
+<!-- `make toc` to generate https://github.com/jonschlinkert/markdown-toc#cli -->
+
+<!-- toc -->
+
+- [Analysis](#analysis)
+- [Useful Resources](#useful-resources)
+- [Diagram (WIP)](#diagram-wip)
+
+<!-- tocstop -->
+
 ### Analysis
 
 > Whoa. This is a biggie to do as the first one. Postponing to work on something else.

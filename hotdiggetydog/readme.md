@@ -7,6 +7,33 @@ Requirements: must be lightweight in size--laptop is too unwieldy to use efficie
 
 Users: fifty or so hot dog stand operators, thousands of customers in the local area (via social-media)
 
+### Contents
+<!-- `make toc` to generate https://github.com/jonschlinkert/markdown-toc#cli -->
+
+<!-- toc -->
+
+- [Handy Links](#handy-links)
+- [Analysis](#analysis)
+  * [Mobile App](#mobile-app)
+  * [Card Reader and SDK](#card-reader-and-sdk)
+  * [Payment Processing](#payment-processing)
+  * [Inventory Management](#inventory-management)
+  * [Track Sales by Time and Location](#track-sales-by-time-and-location)
+  * [Provide Social Media Updates](#provide-social-media-updates)
+  * [User Management and Authentication](#user-management-and-authentication)
+    + [Authentication Options](#authentication-options)
+      - [Auth0](#auth0)
+      - [Frontegg](#frontegg)
+      - [AWS Cognito](#aws-cognito)
+      - [Custom Built OAuth](#custom-built-oauth)
+      - [Custom Authentication and Authorisation](#custom-authentication-and-authorisation)
+  * [Risks](#risks)
+  * [Non-Functionals](#non-functionals)
+  * [Constraints](#constraints)
+  * [Principles](#principles)
+
+<!-- tocstop -->
+
 ### Handy Links
 
 https://frontegg.com/ Ui for setting up things like OAuth or passwordless authentication.
@@ -215,15 +242,30 @@ The callback URI was my app's endpoint running locally i.e. http://localhost:517
 
 **Price: Starter $99 per month, Professional $799 per month.**
 
-###### AWS Cogito
+###### AWS Cognito
 https://aws.amazon.com/pm/cognito/
 
 **Price: https://calculator.aws/#/addService/Cognito says 7,500 MAU is free. Max is 50,000 MAU.**
 
+https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-integrate-apps.html
+
+https://docs.aws.amazon.com/cognito/latest/developerguide/user-pools-API-operations.html
+
+There's a learning curve with this but as it's free and it provides OAuth 2.0 and lets you administer user's roles and permissions, maybe should go with this.
+
 ###### Custom Built OAuth
-There are examples of implementing OAuth all over the internet.
+There are examples of implementing OAuth all over the internet. It would be handy if we didn't have to roll our own authentication and authorisation, and roles and permissions for users, so maybe go for AWS Cognito.
 
 **Price: Free**
+
+###### Custom Authentication and Authorisation
+Come up with own approach like username and password, user gets a token signed by our own auth service.
+
+Use RBAC for the user authorisation?
+
+#### Risks
+* AWS Cognito 
+  * If we use AWS Cognito for authentication, authorisation and permissions and roles for users using OAuth2.0 and Google/Facebook, etc logins, it will be a risk if the dev team aren't familiar with Cognito or OAuth 2.0.
 
 #### Non-Functionals
 
