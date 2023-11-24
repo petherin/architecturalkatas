@@ -1,4 +1,4 @@
-## Hot Diggety Dog
+# Hot Diggety Dog
 https://www.architecturalkatas.com/kata.html?kata=HotDiggetyDog.json
 
 Local hot dog stand merchant wants a point-of-sale system for his hot dog stand operators
@@ -7,34 +7,34 @@ Requirements: must be lightweight in size--laptop is too unwieldy to use efficie
 
 Users: fifty or so hot dog stand operators, thousands of customers in the local area (via social-media)
 
-### Contents
+## Contents
 <!-- `make toc` to generate https://github.com/jonschlinkert/markdown-toc#cli -->
 
 <!-- toc -->
 
-  * [Handy Links](#handy-links)
-  * [Analysis](#analysis)
+- [Handy Links](#handy-links)
+- [Analysis](#analysis)
   * [Container Diagram](#container-diagram)
   * [Components (so far)](#components-so-far)
-    + [Mobile App](#mobile-app)
-    + [Card Reader and SDK](#card-reader-and-sdk)
-    + [Payment Processing](#payment-processing)
-    + [Inventory Management](#inventory-management)
-    + [Track Sales by Time and Location](#track-sales-by-time-and-location)
-    + [Provide Social Media Updates](#provide-social-media-updates)
-      - [Facebook](#facebook)
-      - [Twitter/X](#twitterx)
-    + [User Management and Authentication](#user-management-and-authentication)
-      - [User Authentication Options](#user-authentication-options)
-        * [Auth0](#auth0)
-        * [Frontegg](#frontegg)
-        * [AWS Cognito](#aws-cognito)
-        * [Custom Built OAuth](#custom-built-oauth)
-        * [Custom Authentication and Authorisation](#custom-authentication-and-authorisation)
-    + [Risks](#risks)
-    + [Non-Functionals](#non-functionals)
-    + [Constraints](#constraints)
-    + [Principles](#principles)
+  * [Mobile App](#mobile-app)
+  * [Card Reader and SDK](#card-reader-and-sdk)
+  * [Payment Processing](#payment-processing)
+  * [Inventory Management](#inventory-management)
+  * [Track Sales by Time and Location](#track-sales-by-time-and-location)
+  * [Provide Social Media Updates](#provide-social-media-updates)
+    + [Facebook](#facebook)
+    + [Twitter/X](#twitterx)
+  * [User Management and Authentication](#user-management-and-authentication)
+    + [User Authentication Options](#user-authentication-options)
+      - [Auth0](#auth0)
+      - [Frontegg](#frontegg)
+      - [AWS Cognito](#aws-cognito)
+      - [Custom Built OAuth](#custom-built-oauth)
+      - [Custom Authentication and Authorisation](#custom-authentication-and-authorisation)
+  * [Risks](#risks)
+  * [Non-Functionals](#non-functionals)
+  * [Constraints](#constraints)
+  * [Principles](#principles)
 - [Notes](#notes)
 - [User Authentication Versus App Authentication](#user-authentication-versus-app-authentication)
   * [User Authentication:](#user-authentication)
@@ -76,11 +76,11 @@ Users: fifty or so hot dog stand operators, thousands of customers in the local 
 
 <!-- tocstop -->
 
-### Handy Links
+## Handy Links
 
 https://frontegg.com/ Ui for setting up things like OAuth or passwordless authentication.
 
-### Analysis
+## Analysis
 
 ### Container Diagram
 This is a first pass at the services and messages for the solution. Excalidraw file [here](hotdiggetydog_container_firstpass.excalidraw), open in https://excalidraw.com/. 
@@ -97,8 +97,9 @@ To do: Decide on technology, consider more messages between services, where to h
 * Database - for inventory (and users with their roles?)
 * Transaction service - to talk to SumUp
 * SumUp (third party payment service)
+* Queue for notifications
 
-#### Mobile App
+### Mobile App
 This amounts to: design the Square, PayPal Here, Shopify POS apps.
 
 No laptop, so a mobile app which connects to a card reader for taking card payments. 
@@ -119,7 +120,7 @@ Something to bear in mind when it comes to integrating with social media sites l
 
 It suggests some approaches, see `Alternatives to Facebook SDK for React Native` section below.
 
-#### Card Reader and SDK
+### Card Reader and SDK
 App needs to take payments from card reader and call a system to process the payment.
 
 Which card reader to use?
@@ -132,7 +133,7 @@ Other card reader/SDK combos are:
 * Square Reader for Contactless and Chip/Square SDK
 * Stripe Terminal/Stripe Terminal SDK
 
-#### Payment Processing
+### Payment Processing
 
 Choose a third party payment processor like:
 
@@ -148,7 +149,7 @@ Choose a third party payment processor like:
 
 See `SumUp Process` below for a possible sequence of events when a sale is made.
 
-#### Inventory Management
+### Inventory Management
 
 All possible inventory items.
 
@@ -255,7 +256,7 @@ When a vendor is restocked, we need to update inventory for that vendor. The sto
 
 There is no requirement to track overall stock.
 
-#### Track Sales by Time and Location
+### Track Sales by Time and Location
 
 A SumUp transaction has:
 
@@ -266,20 +267,20 @@ A SumUp transaction has:
 
 So we have all the time and location data we need, no need for extra functionality in our app.
 
-#### Provide Social Media Updates
+### Provide Social Media Updates
 
 Use Facebook, Twitter APIs to post things from within the app. 
 
 Provide a page in the app where posts can be composed and sent. The social media service would receive these and send them to the selected social media sites.
 
-##### Facebook
+#### Facebook
 Set up a page for the hot dog business on Facebook that users can subscribe to.
 
 Facebook users who subscribe will see posts in the page.
 
 See `Sending Posts to Facebook Page` section below.
 
-##### Twitter/X
+#### Twitter/X
 
 Twitter users would follow the hot dog company account and see posts that could be posted from within the app.
 
@@ -287,7 +288,7 @@ You can have personal or business accounts, think persona will suffice.
 
 See `Sending Posts to Twitter/X` section below.
 
-#### User Management and Authentication
+### User Management and Authentication
 Some users are people selling hot dogs and taking payments. They can post on social media.
 
 Some users are mobile inventory management staff who should receive inventory notifications so they can restock a vendor at a known location.
@@ -304,8 +305,8 @@ It's typical for multiple individuals in a small business to use the same SumUp 
 
 So when a user is logged in, they can use the one SumUp account. The app would contact a separate transaction service and it would talk to the SumUp API and return the results back to the app.
 
-##### User Authentication Options
-###### Auth0
+#### User Authentication Options
+##### Auth0
 [00-login-hooks](00-login-hooks) - a React Native OAuth solution created by Auth0, that uses Google, Twitter, Facebook etc for logging in users.
 
 Auth0 lets us create users, and roles with permissions.
@@ -320,7 +321,7 @@ This is really close to the 7,000 free users you get in the free tier.
 
 **Price: The Essentials tier with 7,000 MAU is $160 per month. Max users is 10,000.**
 
-###### Frontegg
+##### Frontegg
 
 [app-with-frontegg](app-with-frontegg) - a React app integrating with a Frontegg solution.
 
@@ -358,7 +359,7 @@ The callback URI was my app's endpoint running locally i.e. http://localhost:517
 
 **Price: Starter $99 per month, Professional $799 per month.**
 
-###### AWS Cognito
+##### AWS Cognito
 https://aws.amazon.com/pm/cognito/
 
 **Price: https://calculator.aws/#/addService/Cognito says 7,500 MAU is free. Max is 50,000 MAU.**
@@ -369,12 +370,12 @@ https://docs.aws.amazon.com/cognito/latest/developerguide/user-pools-API-operati
 
 There's a learning curve with this but as it's free and it provides OAuth 2.0 and lets you administer user's roles and permissions, maybe should go with this.
 
-###### Custom Built OAuth
+##### Custom Built OAuth
 There are examples of implementing OAuth all over the internet. It would be handy if we didn't have to roll our own authentication and authorisation, and roles and permissions for users, so maybe go for AWS Cognito.
 
 **Price: Free**
 
-###### Custom Authentication and Authorisation
+##### Custom Authentication and Authorisation
 Come up with own approach like username and password, user gets a token signed by our own auth service.
 
 Use RBAC for the user authorisation?
@@ -383,17 +384,17 @@ Refer to https://mobile-security.gitbook.io/mobile-security-testing-guide/genera
 
 **Price: Free**
 
-#### Risks
+### Risks
 * AWS Cognito 
   * If we use AWS Cognito for authentication, authorisation and permissions and roles for users using OAuth2.0 and Google/Facebook, etc logins, it will be a risk if the dev team aren't familiar with Cognito or OAuth 2.0.
 * Custom Authentication and Authorisation
   * Dev team would need to know how to implement their own auth.
 
-#### Non-Functionals
+### Non-Functionals
 
-#### Constraints
+### Constraints
 
-#### Principles
+### Principles
 
 ## Notes
 ## User Authentication Versus App Authentication
