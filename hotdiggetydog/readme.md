@@ -21,8 +21,10 @@ Users: fifty or so hot dog stand operators, thousands of customers in the local 
     + [Inventory Management](#inventory-management)
     + [Track Sales by Time and Location](#track-sales-by-time-and-location)
     + [Provide Social Media Updates](#provide-social-media-updates)
+      - [Facebook](#facebook)
+      - [Twitter/X](#twitterx)
     + [User Management and Authentication](#user-management-and-authentication)
-      - [Authentication Options](#authentication-options)
+      - [User Authentication Options](#user-authentication-options)
         * [Auth0](#auth0)
         * [Frontegg](#frontegg)
         * [AWS Cognito](#aws-cognito)
@@ -44,6 +46,31 @@ Users: fifty or so hot dog stand operators, thousands of customers in the local 
   * [5. Handling Token Expiry:](#5-handling-token-expiry)
   * [Security Considerations:](#security-considerations)
   * [Sequence Diagram](#sequence-diagram)
+- [Integration with Facebook](#integration-with-facebook)
+  * [1. Create a Facebook App:](#1-create-a-facebook-app)
+  * [2. Obtain Page Access Token:](#2-obtain-page-access-token)
+  * [3. Integrate Facebook SDK into Your App:](#3-integrate-facebook-sdk-into-your-app)
+  * [4. Use the Graph API to Post:](#4-use-the-graph-api-to-post)
+  * [Example (using cURL):](#example-using-curl)
+  * [5. Handle Authentication:](#5-handle-authentication)
+  * [6. Error Handling:](#6-error-handling)
+  * [7. Testing:](#7-testing)
+  * [Important Note:](#important-note)
+- [Sending Posts to Twitter/X](#sending-posts-to-twitterx)
+  * [1. Create a Twitter Developer Account:](#1-create-a-twitter-developer-account)
+  * [2. Create a Twitter App:](#2-create-a-twitter-app)
+  * [3. Obtain API Keys and Access Tokens:](#3-obtain-api-keys-and-access-tokens)
+  * [4. Integrate Twitter API in Your App:](#4-integrate-twitter-api-in-your-app)
+  * [5. Use the API to Post Tweets:](#5-use-the-api-to-post-tweets)
+  * [Example (using cURL):](#example-using-curl-1)
+  * [6. Handle Authentication:](#6-handle-authentication)
+  * [7. Error Handling:](#7-error-handling)
+  * [8. Testing:](#8-testing)
+  * [Important Note:](#important-note-1)
+- [Alternatives to Facebook SDK for React Native](#alternatives-to-facebook-sdk-for-react-native)
+  * [1. **Use Custom Native Modules:**](#1-use-custom-native-modules)
+  * [2. **Use Third-Party Libraries:**](#2-use-third-party-libraries)
+  * [3. **Direct API Requests:**](#3-direct-api-requests)
 
 <!-- tocstop -->
 
@@ -57,6 +84,7 @@ https://frontegg.com/ Ui for setting up things like OAuth or passwordless authen
 * Mobile app (possibly React Native) - user authorisation
 * Authorisation service - for user authentication and token generation
 * Inventory service - tracking inventory
+* Social media service - post to Facebook, X/Twitter. Would need to be a page in the app to compose and send posts which the social media service would post
 * Database - for inventory (and users with their roles?)
 * Transaction service - to talk to SumUp
 * SumUp (third party payment service)
@@ -74,9 +102,13 @@ Separate depending on OS, meaning two codebases.
 
 * Android - Kotlin for modern Android development
 
-Or cross-platform, one codebase, so: **React Native**.
+Or cross-platform, one codebase, so: React Native.
 
 But let developers ultimately decide this as they have more knowledge of this.
+
+Something to bear in mind when it comes to integrating with social media sites like Facebook is the [End of Official Support for Facebook SDK for React Native](https://developers.facebook.com/blog/post/2021/01/19/introducing-facebook-platform-sdk-version-9/) announced 19th Janaury 2021.
+
+It suggests some approaches, see `Alternatives to Facebook SDK for React Native` section below.
 
 #### Card Reader and SDK
 App needs to take payments from card reader and call a system to process the payment.
@@ -192,7 +224,24 @@ So we have all the time and location data we need, no need for extra functionali
 
 #### Provide Social Media Updates
 
-Use Facebook, Twitter, Instagram APIs to post things from within the app.
+Use Facebook, Twitter APIs to post things from within the app. 
+
+Provide a page in the app where posts can be composed and sent. The social media service would receive these and send them to the selected social media sites.
+
+##### Facebook
+Set up a page for the hot dog business on Facebook that users can subscribe to.
+
+Facebook users who subscribe will see posts in the page.
+
+See `Sending Posts to Facebook Page` section below.
+
+##### Twitter/X
+
+Twitter users would follow the hot dog company account and see posts that could be posted from within the app.
+
+You can have personal or business accounts, think persona will suffice.
+
+See `Sending Posts to Twitter/X` section below.
 
 #### User Management and Authentication
 Some users are people selling hot dogs and taking payments. They can post on social media.
@@ -211,7 +260,7 @@ It's typical for multiple individuals in a small business to use the same SumUp 
 
 So when a user is logged in, they can use the one SumUp account. The app would contact a separate transaction service and it would talk to the SumUp API and return the results back to the app.
 
-##### Authentication Options
+##### User Authentication Options
 ###### Auth0
 [00-login-hooks](00-login-hooks) - a React Native OAuth solution created by Auth0, that uses Google, Twitter, Facebook etc for logging in users.
 
@@ -293,6 +342,8 @@ Refer to https://mobile-security.gitbook.io/mobile-security-testing-guide/genera
 #### Risks
 * AWS Cognito 
   * If we use AWS Cognito for authentication, authorisation and permissions and roles for users using OAuth2.0 and Google/Facebook, etc logins, it will be a risk if the dev team aren't familiar with Cognito or OAuth 2.0.
+* Custom Authentication and Authorisation
+  * Dev team would need to know how to implement their own auth.
 
 #### Non-Functionals
 
@@ -410,3 +461,154 @@ Here's how you would ensure a user can perform an action in a React Native mobil
 
 ### Sequence Diagram
 ![authflow.png](authflow.png)
+
+## Integration with Facebook
+To allow your smartphone app to send posts to a Facebook Page, you can use the Facebook Graph API. Here are the general steps to achieve this:
+
+### 1. Create a Facebook App:
+
+- Go to the [Facebook Developers](https://developers.facebook.com/) website, log in with your Facebook account, and create a new app. This app will be associated with the Facebook Page to which you want to post.
+
+### 2. Obtain Page Access Token:
+
+- Get a Page Access Token for the Facebook Page associated with your app. You can obtain this token by following the authentication process detailed in the Facebook Graph API documentation.
+
+### 3. Integrate Facebook SDK into Your App:
+
+- Depending on your app's platform (iOS, Android, etc.), integrate the Facebook SDK into your mobile app. Follow the documentation provided by Facebook for the specific platform.
+
+    - For Android: [Facebook SDK for Android](https://developers.facebook.com/docs/android/)
+    - For iOS: [Facebook SDK for iOS](https://developers.facebook.com/docs/ios/)
+
+### 4. Use the Graph API to Post:
+
+- Use the Graph API to post content to the Facebook Page. The endpoint for posting to a Page's feed is typically:
+
+    ```
+    POST /v12.0/{page-id}/feed
+    ```
+
+  Here, `{page-id}` is the ID of the Facebook Page where you want to post.
+
+  Include the necessary parameters, such as the message, link, image, or other content you want to post. Ensure that you have the `publish_pages` permission for the Page.
+
+### Example (using cURL):
+
+```bash
+curl -X POST \
+  -d "message=Your message here" \
+  -d "access_token=YOUR_PAGE_ACCESS_TOKEN" \
+  "https://graph.facebook.com/v12.0/{page-id}/feed"
+```
+
+### 5. Handle Authentication:
+
+- Ensure that your app properly handles user authentication and authorization to obtain the necessary permissions to post on behalf of the user.
+
+### 6. Error Handling:
+
+- Implement error handling to manage cases where the post cannot be published.
+
+### 7. Testing:
+
+- Thoroughly test your implementation to make sure that posts are being successfully sent to the Facebook Page.
+
+### Important Note:
+
+- Keep in mind that Facebook's API and SDKs may evolve, and it's crucial to refer to the most up-to-date [Facebook Developers documentation](https://developers.facebook.com/docs/) for accurate information.
+
+- Be aware of Facebook's policies and guidelines regarding automated posting, and ensure that your app complies with these policies to avoid any issues.
+
+By following these steps, your smartphone app should be able to send posts to a Facebook Page using the Facebook Graph API.
+
+## Sending Posts to Twitter/X
+
+To achieve a similar goal of posting tweets to a Twitter account from your smartphone app, you can use the Twitter API. Here are the general steps:
+
+### 1. Create a Twitter Developer Account:
+
+- Go to the [Twitter Developer](https://developer.twitter.com/en/apps) portal, sign in with your Twitter account, and create a new developer account if you haven't already.
+
+### 2. Create a Twitter App:
+
+- Once your developer account is set up, create a new Twitter App. This will provide you with API keys and access tokens necessary for authentication.
+
+### 3. Obtain API Keys and Access Tokens:
+
+- After creating the app, navigate to the "Keys and Tokens" section to obtain the API key, API secret key, Access token, and Access token secret.
+
+### 4. Integrate Twitter API in Your App:
+
+- Depending on your app's platform (iOS, Android, etc.), integrate the Twitter API into your mobile app. Twitter provides SDKs and libraries for different platforms. Refer to the [Twitter Developer Documentation](https://developer.twitter.com/en/docs) for the specific SDK or library that suits your needs.
+
+    - For Android: [Twitter for Android](https://developer.twitter.com/en/docs/twitter-for-android)
+    - For iOS: [Twitter Kit for iOS](https://developer.twitter.com/en/docs/twitter-kit/ios)
+
+### 5. Use the API to Post Tweets:
+
+- Use the Twitter API to post tweets. The endpoint for posting tweets is typically:
+
+    ```
+    POST /1.1/statuses/update.json
+    ```
+
+  Include the necessary parameters, such as the status (text of the tweet) and any other relevant information.
+
+### Example (using cURL):
+
+```bash
+curl -X POST \
+  -H "Authorization: OAuth YOUR_OAUTH_HEADER" \
+  -d "status=Your tweet here" \
+  "https://api.twitter.com/1.1/statuses/update.json"
+```
+
+### 6. Handle Authentication:
+
+- Ensure that your app properly handles user authentication and authorization to obtain the necessary tokens to post on behalf of the user.
+
+### 7. Error Handling:
+
+- Implement error handling to manage cases where the tweet cannot be published.
+
+### 8. Testing:
+
+- Thoroughly test your implementation to ensure that tweets are being successfully sent to the Twitter account.
+
+### Important Note:
+
+- Keep in mind that Twitter's API and SDKs may evolve, and it's crucial to refer to the most up-to-date [Twitter Developer Documentation](https://developer.twitter.com/en/docs) for accurate information.
+
+- Be aware of Twitter's policies and guidelines regarding automated tweeting, and ensure that your app complies with these policies to avoid any issues.
+
+By following these steps, your smartphone app should be able to post tweets to a Twitter account using the Twitter API.
+
+## Alternatives to Facebook SDK for React Native
+
+Here are alternative steps you can take to integrate Facebook with your React Native app:
+
+### 1. **Use Custom Native Modules:**
+
+You can still integrate with Facebook by using custom native modules. This involves writing your own bridge between the React Native JavaScript code and the native Facebook SDKs for iOS and Android. This approach requires knowledge of native development languages (Objective-C/Swift for iOS, Java/Kotlin for Android).
+
+1. **iOS:**
+    - Integrate the Facebook SDK for iOS using CocoaPods or manually linking the SDK.
+    - Write a custom React Native Native Module that wraps the necessary iOS functionality.
+    - Expose the module to React Native JavaScript.
+
+2. **Android:**
+    - Integrate the Facebook SDK for Android using Gradle or manually linking the SDK.
+    - Write a custom React Native Native Module that wraps the necessary Android functionality.
+    - Expose the module to React Native JavaScript.
+
+### 2. **Use Third-Party Libraries:**
+
+Consider using third-party libraries that provide React Native wrappers for the Facebook SDK. These libraries may continue to be maintained by the community even if the official support is discontinued. However, be cautious and check the library's documentation and GitHub repository for recent updates and community support.
+
+### 3. **Direct API Requests:**
+
+If you have specific requirements and the above approaches do not meet your needs, you can make direct API requests to the Facebook Graph API using standard HTTP requests from your React Native app. This way, you bypass the SDK and handle the integration manually.
+
+Keep in mind that the field of technology is dynamic, and new solutions may emerge. Always check the latest updates, community discussions, and alternative libraries that may offer support for Facebook integration in React Native beyond the official SDK.
+
+Remember to comply with Facebook's developer policies and guidelines, and ensure that your application follows best practices for handling user data and authentication.
