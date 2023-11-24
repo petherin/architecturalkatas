@@ -14,6 +14,7 @@ Users: fifty or so hot dog stand operators, thousands of customers in the local 
 
   * [Handy Links](#handy-links)
   * [Analysis](#analysis)
+  * [Container Diagram](#container-diagram)
   * [Components (so far)](#components-so-far)
     + [Mobile App](#mobile-app)
     + [Card Reader and SDK](#card-reader-and-sdk)
@@ -71,6 +72,7 @@ Users: fifty or so hot dog stand operators, thousands of customers in the local 
   * [1. **Use Custom Native Modules:**](#1-use-custom-native-modules)
   * [2. **Use Third-Party Libraries:**](#2-use-third-party-libraries)
   * [3. **Direct API Requests:**](#3-direct-api-requests)
+- [SumUp Process](#sumup-process)
 
 <!-- tocstop -->
 
@@ -79,6 +81,13 @@ Users: fifty or so hot dog stand operators, thousands of customers in the local 
 https://frontegg.com/ Ui for setting up things like OAuth or passwordless authentication.
 
 ### Analysis
+
+### Container Diagram
+This is a first pass at the services and messages for the solution. Excalidraw file [here](hotdiggetydog_container_firstpass.excalidraw), open in https://excalidraw.com/. 
+
+To do: Decide on technology, consider more messages between services, where to host (AWS?), consider load balancing, database replication, caching. Do a proper C4 container diagram.
+
+![hotdiggetydog_container_firstpass.png](hotdiggetydog_container_firstpass.png)
 
 ### Components (so far)
 * Mobile app (possibly React Native) - user authorisation
@@ -136,6 +145,8 @@ Choose a third party payment processor like:
 * Worldpay (FIS)
 * **SumUp - as we're using their card reader and SDK we might as well use them for the actual payment processing**
 * Shopify Payments
+
+See `SumUp Process` below for a possible sequence of events when a sale is made.
 
 #### Inventory Management
 
@@ -209,6 +220,39 @@ Let's assume you get:
 
 This makes it easy to know how many items to re-add.
 
+How do the stockers know which vendor to go to? When a sale is made, the vendor's location from their phone can be sent along with the transaction data. This data is also available from the SumUp response. Once the transaction is complete, the transaction service (or the phone app) can update inventory using the inventory service. If the inventory response shows inventory levels have hit a threshold for hot dogs, hot dog buns or onion portions, it can use the location data of the phone or SumUp response to send a request to the app to create a notification for all `stocker` users, so they know what supplies to take, the vendor who needs them, and their location.
+
+What if no stockers are logged in at the time? Notifications should be added to a queue. The phone app should be able to access the queue for anyone logging in as a stocker.
+
+When a stocker logs in they get the notification. Do we just notify one stocker, some or all? Notifications need to be acknowleged. So send the notification to all logged-in stockers. Each stocker should see the notification once but be able to see them in an area of the app as well.
+
+When a stocker acknowledges a notification it's removed from the queue and they are expected to go and restock the vendor.
+
+Possible restock message format:
+
+```json
+{
+  "vendor_id": "13232",
+  "location": {
+    "lat": 23455.3,
+    "lon": 10928.1
+  },
+  "stock": [
+    {
+      "id": 2, // e.g. hot dog buns
+      "units": 200 // need 200 buns i.e. 1 bag of 200 buns
+    },
+    {
+      "id": 3, // e.g. onion portions
+      "units": 400 // need 400 onion portions i.e. 2 bags of 200 onion portions
+    }
+  ]
+}
+```
+
+
+When a vendor is restocked, we need to update inventory for that vendor. The stocker needs to press something in the app to say they provided the requested stock. The requested stock would be appear in text boxes so they could edit it if they brought more or different stock. Submitting this would update the database via the inventory service.
+
 There is no requirement to track overall stock.
 
 #### Track Sales by Time and Location
@@ -246,14 +290,14 @@ See `Sending Posts to Twitter/X` section below.
 #### User Management and Authentication
 Some users are people selling hot dogs and taking payments. They can post on social media.
 
-Some users are mobile inventory management staff who should receive inventory notifications so they can restock a seller at a known location.
+Some users are mobile inventory management staff who should receive inventory notifications so they can restock a vendor at a known location.
 
 Some users need to see all payments, inventory, sales by time and location, so they're the admins.
 
 Roles
 
-* **seller** - make payments, post on social media
-* **supplier** - receive notifications of low supplies at a given hot dog stand so they can go and resupply
+* **vendor** - make payments, post on social media
+* **stocker** - receive notifications of low supplies at a given hot dog stand so they can go and resupply
 * **admin** - can do all of the above and see all sales information, and manage users and change their roles
 
 It's typical for multiple individuals in a small business to use the same SumUp account.
@@ -612,3 +656,38 @@ If you have specific requirements and the above approaches do not meet your need
 Keep in mind that the field of technology is dynamic, and new solutions may emerge. Always check the latest updates, community discussions, and alternative libraries that may offer support for Facebook integration in React Native beyond the official SDK.
 
 Remember to comply with Facebook's developer policies and guidelines, and ensure that your application follows best practices for handling user data and authentication.
+
+## SumUp Process
+The sequence of events for a SumUp transaction through your smartphone app involving a SumUp card reader typically involves several steps. Below is a general outline of the process:
+
+1. **User Initiation:**
+    - The user initiates a sale or transaction within your smartphone app. This could involve selecting products/services, entering the transaction amount, and choosing to proceed with a card payment.
+
+2. **Payment Request:**
+    - Your smartphone app sends a payment request to your transaction service, indicating the transaction details, including the amount to be charged.
+
+3. **SumUp Integration:**
+    - Your transaction service communicates with SumUp's API to initiate the card payment process. This involves generating a payment request to SumUp, which will be processed through the SumUp card reader.
+
+4. **SumUp Card Reader Interaction:**
+    - The SumUp card reader connects to the smartphone app, typically using Bluetooth. The customer inserts or taps their payment card into the SumUp card reader.
+
+5. **Card Data Encryption:**
+    - The SumUp card reader encrypts the card data and securely communicates it to SumUp's servers for processing. The encryption ensures the security of sensitive payment information.
+
+6. **Transaction Processing:**
+    - SumUp processes the payment transaction using the provided card data and communicates the result (approval or decline) back to your transaction service.
+
+7. **Transaction Response:**
+    - Your transaction service receives the response from SumUp and updates the transaction status in your app. If the transaction is approved, the sale is considered successful. If it's declined, appropriate actions can be taken, such as notifying the user.
+
+8. **Receipt and Confirmation:**
+    - Upon successful completion of the transaction, your app may generate a receipt for the customer. The SumUp API or your transaction service may provide details for creating and presenting receipts.
+
+9. **Backend Accounting and Reporting:**
+    - Your transaction service logs the transaction details, updating your backend systems for accounting purposes. This may include storing transaction records, generating reports, and updating inventory if applicable.
+
+10. **User Feedback:**
+    - Your app provides feedback to the user, confirming the success or failure of the transaction. This may include on-screen messages, notifications, or email receipts.
+
+It's important to note that the specifics of the integration may vary based on the SumUp API version, SDKs used, and any specific features your app implements. Always refer to the official documentation provided by SumUp for accurate and up-to-date information on integrating their services into your app. Additionally, ensure that your app complies with relevant security and compliance standards for handling payment transactions.
