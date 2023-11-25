@@ -149,6 +149,23 @@ Choose a third party payment processor like:
 
 See `SumUp Process` below for a possible sequence of events when a sale is made.
 
+To offer discounts on a product, we first need to have a payment page in the web app. It can show all products (retrieved from the database products table) along with the prices. There should be an option in the UI to set a discount on a product which would then change the amount in the request to SumUp.
+
+Products will be:
+
+`products`
+
+| id | name    | price |
+|----|---------|-------|
+| 1  | hot dog | 3.00  |
+| 2  | onions  | 0.00  |
+
+So we don't charge for onions but we need to know we've used some for the purposes of inventory.
+
+We don't bother tracking condiments.
+
+Products are separate to inventory - products are what customers buy, inventory are the separate items that constitute a hot dog.
+
 ### Inventory Management
 
 All possible inventory items.
